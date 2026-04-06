@@ -1,10 +1,9 @@
-#include <stdio.h>  // Standard Input/Output (printf, scanf)
-#include <unistd.h> // For usleep
+#include <stdio.h> 
+#include <unistd.h> 
 
 int main(void)
 {
-    // --- STANDARD C STRINGS ---
-    // Instead of 'string', we use 'const char *' (Pointer to characters)
+    // --- ANSI COLOR CODES ---
     const char *GREEN = "\033[0;32m";
     const char *RED = "\033[0;31m";
     const char *RESET = "\033[0m";
@@ -17,12 +16,11 @@ int main(void)
     printf("========================================\n");
     printf("%s", RESET);
 
-    // 2. STANDARD INPUT (The biggest change)
+    // 2. TARGET INPUT
     int pin;
     
     printf("Set Target PIN (0000-9999): ");
     
-    // scanf reads an integer ("%d") and stores it at the ADDRESS of 'pin' (&pin)
     // We check if the input is valid (scanf returns 1 if it successfully read a number)
     if (scanf("%d", &pin) != 1) 
     {
@@ -30,32 +28,39 @@ int main(void)
         return 1;
     }
 
-    // Simple validation logic
+    // Validation logic to ensure it stays within 4 digits
     if (pin < 0 || pin > 9999)
     {
-        printf("%s[!] Error: PIN must be 0000-9999.\n%s", RED, RESET);
+        printf("%s[!] Error: PIN must be between 0000 and 9999.\n%s", RED, RESET);
         return 1;
     }
-
+    // 0.5 second pause for dramatic effect
     printf("\n%s[!] INITIALIZING BRUTE FORCE ATTACK...%s\n", RED, RESET);
-    usleep(500000); 
+    usleep(500000);
+    
 
-    // 3. The Attack Loop (Same Logic)
+    // 3. The Attack Loop
     for (int i = 0; i <= 9999; i++)
     {
+        // \r returns the cursor to the start of the line so it updates in place
         printf("\r%s[*] Testing PIN combination: %04i%s", RED, i, RESET);
-        fflush(stdout); // FORCE the print to happen immediately (standard C can be lazy with printing)
         
+        // Force the print to happen immediately
+        fflush(stdout); 
+        
+        // Small delay for dramatic effect
         usleep(500); 
 
-        // 4. Check for Match
+    // 4. Check for Match
+    // exit loop once found
         if (i == pin)
         {
             printf("\n\n");
             printf("%s[+] PASSWORD CRACKED SUCCESSFULLY!%s\n", GREEN, RESET);
             printf("%s[+] MATCH FOUND: %04i%s\n", GREEN, i, RESET);
-            printf("========================================\n");
-            return 0;
+            break;
         }
     }
+
+    return 0;
 }
